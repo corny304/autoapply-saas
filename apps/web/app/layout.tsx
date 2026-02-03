@@ -1,4 +1,6 @@
 import './globals.css'
+import Footer from './components/Footer'
+import CookieBanner from './components/CookieBanner'
 
 export const metadata = {
   title: 'AutoApply - Automatische Bewerbungen',
@@ -12,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="de">
-      <body>{children}</body>
+      <body>
+        {children}
+        <Footer />
+        <CookieBanner />
+      </body>
     </html>
   )
 }
