@@ -1,6 +1,45 @@
+'use client';
+
 import Link from 'next/link';
+import { useState } from 'react';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://autoapply-saas-production.up.railway.app';
 
 export default function PreisePage() {
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleCheckout = async (priceId: string, plan: string) => {
+    setLoading(plan);
+    
+    try {
+      const response = await fetch(`${API_URL}/stripe/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          price_id: priceId,
+          success_url: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancel_url: `${window.location.origin}/preise`,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.checkout_url) {
+        // Redirect zu Stripe Checkout
+        window.location.href = data.checkout_url;
+      } else {
+        alert('Fehler beim Erstellen der Checkout-Session');
+        setLoading(null);
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
+      setLoading(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       <div className="container mx-auto px-4 py-20">
@@ -70,12 +109,13 @@ export default function PreisePage() {
                 <span>Priority Support</span>
               </li>
             </ul>
-            <Link 
-              href="/register" 
-              className="block w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-center hover:bg-blue-700"
+            <button
+              onClick={() => handleCheckout(process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || '', 'pro')}
+              disabled={loading === 'pro'}
+              className="block w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-center hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Jetzt upgraden
-            </Link>
+              {loading === 'pro' ? 'Wird geladen...' : 'Jetzt upgraden'}
+            </button>
           </div>
 
           {/* Business Plan */}
@@ -103,12 +143,13 @@ export default function PreisePage() {
                 <span>Dedizierter Account Manager</span>
               </li>
             </ul>
-            <Link 
-              href="/register" 
-              className="block w-full bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold text-center hover:bg-gray-200"
+            <button
+              onClick={() => handleCheckout(process.env.NEXT_PUBLIC_STRIPE_PRICE_BUSINESS || '', 'business')}
+              disabled={loading === 'business'}
+              className="block w-full bg-gray-100 text-gray-900 py-3 rounded-lg font-semibold text-center hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Kontakt aufnehmen
-            </Link>
+              {loading === 'business' ? 'Wird geladen...' : 'Kontakt aufnehmen'}
+            </button>
           </div>
         </div>
 

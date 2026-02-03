@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from api.app.routers import documents, profile, jobs, matches, applications, proof, autopilot
+from api.app.routers import documents, profile, jobs, matches, applications, proof, autopilot, stripe_payments
 
 app = FastAPI(title="AutoApply API", version="0.1.0")
 
@@ -19,6 +19,7 @@ app.include_router(matches.router, prefix="/matches", tags=["matches"])
 app.include_router(applications.router, prefix="/applications", tags=["applications"])
 app.include_router(proof.router, prefix="/proof", tags=["proof"])
 app.include_router(autopilot.router, prefix="/autopilot", tags=["autopilot"])
+app.include_router(stripe_payments.router, prefix="/stripe", tags=["stripe"])
 
 @app.get("/")
 def root():
