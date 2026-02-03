@@ -1,0 +1,28 @@
+{
+  "provider": "greenhouse",
+  "detection": {
+    "url_patterns": ["boards.greenhouse.io", "greenhouse.io/apply"],
+    "dom_selectors": ["#application_form", ".application-form"]
+  },
+  "fields": [
+    {"key": "first_name", "selector": "#first_name", "type": "text"},
+    {"key": "last_name", "selector": "#last_name", "type": "text"},
+    {"key": "email", "selector": "#email", "type": "email"},
+    {"key": "phone", "selector": "#phone", "type": "tel"}
+  ],
+  "uploads": [
+    {"key": "cv", "selector": "input[name='resume']", "required": true},
+    {"key": "cover_letter", "selector": "input[name='cover_letter']", "required": false}
+  ],
+  "steps": [
+    {"name": "fill_form", "wait_ms": 500},
+    {"name": "review", "click": "button[type='submit']:has-text('Submit Application')", "wait_ms": 2000, "screenshot": "step_review.png"}
+  ],
+  "success_detection": {
+    "selectors": ["text=Thank you for applying", "text=Application submitted", ".application-confirmation"]
+  },
+  "challenge_detection": {
+    "captcha": ["text=Verify you are human", "#cf-challenge", ".g-recaptcha"],
+    "login_required": ["text=Sign in to continue", "text=Login required"]
+  }
+}
